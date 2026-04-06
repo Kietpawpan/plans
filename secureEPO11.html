@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>แผนการดำเนินการจัดจ้างพนักงานรักษาความปลอดภัย</title>
+  <title>ระบบติดตามความก้าวหน้าการดำเนินการจัดจ้างพนักงานรักษาความปลอดภัย สคพ.11</title>
    <link rel="manifest" href="manifest1.json">
     <meta name="theme-color" content="#4a148c">
   <style>
@@ -86,7 +86,6 @@
       background: #fff;
       z-index: 1;
     }
-    
     .status-box {
       width: 24px;
       height: 24px;
@@ -109,7 +108,6 @@
       color: #e74c3c;
       border: 1px solid #e74c3c;
     }
-    
     .task-name {
       font-size: 14px;
       font-weight: 500;
@@ -117,7 +115,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    
     .text-done { color: #2ecc71; }
     .text-pending { color: #e74c3c; }
 
@@ -183,7 +180,7 @@
 </head>
 <body>
 
-  <h2>แผนการดำเนินการจัดจ้างพนักงานรักษาความปลอดภัย (เริ่ม 2 เม.ย. 2569)</h2>
+  <h2>ระบบติดตามความก้าวหน้าการดำเนินการจัดจ้างพนักงานรักษาความปลอดภัย สคพ.11 (เริ่ม 2 เม.ย. 2569)</h2>
   <div class="gantt-container">
     <div class="gantt-wrapper">
       <div id="gantt-header" class="gantt-header"></div>
@@ -195,11 +192,11 @@
   </div>
 
   <script>
- // นำ URL ของคุณมาใส่ตรงนี้
+  // นำ URL ของคุณมาใส่ตรงนี้
   const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyF7fPA6XLVZzlTgnZJrQZpPFUOO_XeiuptZWrBadAfXitaH4a7_gCXCGZ-TNvyCM_5/exec';
 
   const startDate = new Date(2026, 3, 2); 
-  const totalDays = 40; // ขยายจำนวนวันรองรับงานที่ยาวขึ้น
+  const totalDays = 40; 
   const monthsThai = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
 
   async function loadGanttData() {
@@ -207,7 +204,7 @@
       document.getElementById('task-container').innerHTML = '<div style="padding: 20px; text-align: center;">กำลังซิงค์ข้อมูล...</div>';
 
       const response = await fetch(WEB_APP_URL);
-      const tasks = await response.json(); // ข้อมูลมาเป็น Array ของขั้นตอนจาก Sheet เลย
+      const tasks = await response.json();
 
       if (tasks.length === 0) {
         document.getElementById('task-container').innerHTML = '<div style="padding: 20px; text-align: center;">ไม่พบข้อมูลใน Sheet</div>';
@@ -223,12 +220,9 @@
   }
 
   function renderGantt(tasks) {
-    // ใช้ฟังก์ชันวาดกราฟเดิมที่คุณมีอยู่ 
-    // โดยโค้ดจะวนลูปตามจำนวน tasks ที่ดึงมาจาก Sheet โดยอัตโนมัติ
     let headerHTML = '<div class="task-name-container" style="background: transparent; border: none; font-weight: bold;">สถานะ / ขั้นตอนการดำเนินงาน</div>';
     let gridLinesHTML = '<div class="grid-line" style="grid-column: 1"></div>';
 
-    // วาดหัววันที่
     for (let i = 0; i < totalDays; i++) {
       let d = new Date(startDate);
       d.setDate(d.getDate() + i);
@@ -238,8 +232,8 @@
     }
     document.getElementById('gantt-header').innerHTML = headerHTML;
 
-    // คำนวณวันที่ปัจจุบัน (2 เม.ย. 2569 ตามที่คุณต้องการ)
-    const today = new Date(2026, 3, 2); 
+    // ใช้วันที่ปัจจุบันในการตีเส้นสีแดง
+    const today = new Date(); 
     today.setHours(0, 0, 0, 0); 
     const startForDiff = new Date(startDate);
     startForDiff.setHours(0, 0, 0, 0);
@@ -247,7 +241,8 @@
     const todayIndex = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
     let bodyHTML = '';
-    tasks.forEach(task => {
+
+    tasks.forEach((task) => {
       const startCol = task.start + 2;
       const endCol = startCol + task.duration;
 
@@ -256,25 +251,37 @@
         isBlinking = 'blink';
       }
 
-      const statusIcon = task.isDone ? '✓' : '✗';
-      const statusClass = task.isDone ? 'status-done' : 'status-pending';
-      const textClass = task.isDone ? 'text-done' : 'text-pending';
+      const isCompleted = task.isDone === true; 
+      const statusIcon = isCompleted ? '✓' : '✗';
+      const statusClass = isCompleted ? 'status-done' : 'status-pending';
+      const textClass = isCompleted ? 'text-done' : 'text-pending';
 
-      bodyHTML += '<div class="task-row">';
-      bodyHTML += '<div class="task-name-container">';
-      bodyHTML += '<div class="status-box ' + statusClass + '">' + statusIcon + '</div>';
-      bodyHTML += '<div class="task-name ' + textClass + '">' + task.name + '</div>';
+      bodyHTML += '<div class="task-row" style="height: auto; min-height: 45px; padding: 5px 0;">';
+      bodyHTML += '<div class="task-name-container" style="display: block; padding-top: 10px;">';
+      bodyHTML += '  <div style="display: flex; align-items: center;">';
+      bodyHTML += '    <div class="status-box ' + statusClass + '">' + statusIcon + '</div>';
+      bodyHTML += '    <div class="task-name ' + textClass + '">' + task.name + '</div>';
+      bodyHTML += '  </div>';
+
+      // เช็คว่ามีข้อมูลในคอลัมน์หมายเหตุหรือไม่ ถ้ามีให้แสดงกล่องหมายเหตุ
+      if (task.remark && task.remark.trim() !== '') {
+        bodyHTML += '<div style="margin-left: 34px; margin-top: 5px; font-size: 12px; color: #e74c3c; line-height: 1.4; white-space: normal; background: #fff5f5; padding: 5px; border-radius: 4px; border-left: 3px solid #e74c3c;">';
+        bodyHTML += '<strong>หมายเหตุ:</strong> ' + task.remark;
+        bodyHTML += '</div>';
+      }
+
       bodyHTML += '</div>';
-      bodyHTML += '<div class="task-bar phase' + task.phase + ' ' + isBlinking + '" style="grid-column: ' + startCol + ' / ' + endCol + ';">' + task.duration + ' วัน</div>';
+      bodyHTML += '<div class="task-bar phase' + task.phase + ' ' + isBlinking + '" style="grid-column: ' + startCol + ' / ' + endCol + '; align-self: center;">' + task.duration + ' วัน</div>';
       bodyHTML += '</div>';
     });
-    
+
     document.getElementById('task-container').innerHTML = bodyHTML;
 
     // วาดเส้นสีแดงวันนี้
     if (todayIndex >= 0 && todayIndex < totalDays) {
       const lineCol = todayIndex + 2;
       let displayDate = today.getDate() + ' ' + monthsThai[today.getMonth()] + ' ' + (today.getFullYear() + 543);
+      
       gridLinesHTML += '<div class="today-line-container" style="grid-column: ' + lineCol + ';">';
       gridLinesHTML += '<div class="today-label">วันนี้ (' + displayDate + ')</div>';
       gridLinesHTML += '<div class="today-line"></div>';
@@ -284,68 +291,6 @@
   }
 
   loadGanttData();
-
-
-    function renderGantt(tasks) {
-      let headerHTML = '<div class="task-name-container" style="background: transparent; border: none; font-weight: bold;">สถานะ / ขั้นตอนการดำเนินงาน</div>';
-      let gridLinesHTML = '<div class="grid-line" style="grid-column: 1"></div>';
-
-      for (let i = 0; i < totalDays; i++) {
-        let d = new Date(startDate);
-        d.setDate(d.getDate() + i);
-        let dateStr = d.getDate() + ' ' + monthsThai[d.getMonth()];
-        headerHTML += '<div class="date-cell">' + dateStr + '</div>';
-        gridLinesHTML += '<div class="grid-line" style="grid-column: ' + (i + 2) + '"></div>';
-      }
-      document.getElementById('gantt-header').innerHTML = headerHTML;
-
-      const today = new Date(); 
-      today.setHours(0, 0, 0, 0); 
-      const startForDiff = new Date(startDate);
-      startForDiff.setHours(0, 0, 0, 0);
-
-      const diffTime = today.getTime() - startForDiff.getTime();
-      const todayIndex = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-      let bodyHTML = '';
-      tasks.forEach(task => {
-        const startCol = task.start + 2;
-        const endCol = startCol + task.duration;
-
-        let isBlinking = '';
-        if (todayIndex >= task.start && todayIndex < (task.start + task.duration)) {
-          isBlinking = 'blink';
-        }
-
-        const isCompleted = task.isDone === true; 
-        const statusIcon = isCompleted ? '✓' : '✗';
-        const statusClass = isCompleted ? 'status-done' : 'status-pending';
-        const textClass = isCompleted ? 'text-done' : 'text-pending';
-
-        bodyHTML += '<div class="task-row">';
-        bodyHTML += '<div class="task-name-container">';
-        bodyHTML += '<div class="status-box ' + statusClass + '">' + statusIcon + '</div>';
-        bodyHTML += '<div class="task-name ' + textClass + '">' + task.name + '</div>';
-        bodyHTML += '</div>';
-        bodyHTML += '<div class="task-bar phase' + task.phase + ' ' + isBlinking + '" style="grid-column: ' + startCol + ' / ' + endCol + ';">' + task.duration + ' วัน</div>';
-        bodyHTML += '</div>';
-      });
-      
-      document.getElementById('task-container').innerHTML = bodyHTML;
-
-      if (todayIndex >= 0 && todayIndex < totalDays) {
-        const lineCol = todayIndex + 2;
-        let displayDate = today.getDate() + ' ' + monthsThai[today.getMonth()] + ' ' + (today.getFullYear() + 543);
-        
-        gridLinesHTML += '<div class="today-line-container" style="grid-column: ' + lineCol + ';">';
-        gridLinesHTML += '<div class="today-label">วันนี้ (' + displayDate + ')</div>';
-        gridLinesHTML += '<div class="today-line"></div>';
-        gridLinesHTML += '</div>';
-      }
-      document.getElementById('grid-lines').innerHTML = gridLinesHTML;
-    }
-
-    loadGanttData();
   </script>
 </body>
 </html>
